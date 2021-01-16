@@ -1,7 +1,6 @@
 package BackEnd;
 
 
-import java.lang.SecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 

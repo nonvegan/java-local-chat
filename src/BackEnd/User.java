@@ -1,9 +1,9 @@
 package BackEnd;
 
-
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +13,7 @@ public class User implements Serializable {
     private String email;
     private String curso;
     private ListaUsers listaAmigos;
+    private ListaUsers listaPedidos;
     private String ip;
     private int porta;
 
@@ -23,14 +24,41 @@ public class User implements Serializable {
         this.ip = ip;
         this.porta = porta;
         listaAmigos = new ListaUsers();
+        listaPedidos = new ListaUsers();
     }
 
     public String getNickname() {
         return nickname;
     }
 
+    public void addPedido(String user, ListaUsers listaglobal) {
+        if (!listaPedidos.containsUser(nickname) && listaglobal.containsUser(user)) {
+            this.listaPedidos.getUsers().add(listaglobal.getUser(user));
+        }
+    }
+
+    public void removePedido(String nickname) {
+        for (Iterator<User> iterator = listaPedidos.getUsers().iterator(); iterator.hasNext();) {
+            User user = iterator.next();
+            if (user.getNickname().equals(nickname)) {
+                iterator.remove();
+            }
+        }
+    }
+
     public void addAmigo(User user) {
-        this.listaAmigos.getUsers().add(user);
+        if (!listaAmigos.getUsers().contains(user)) {
+            this.listaAmigos.getUsers().add(user);
+        }
+    }
+
+    public void removeAmigo(String nickname) {
+        for (Iterator<User> iterator = listaAmigos.getUsers().iterator(); iterator.hasNext();) {
+            User user = iterator.next();
+            if (user.getNickname().equals(nickname)) {
+                iterator.remove();
+            }
+        }
     }
 
     public String getEmail() {
@@ -56,7 +84,7 @@ public class User implements Serializable {
     public void setPorta(int porta) {
         this.porta = porta;
     }
-    
+
     public void atualizarIp() {
         try {
             setIp(InetAddress.getLocalHost().getHostAddress());
@@ -64,11 +92,13 @@ public class User implements Serializable {
             Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
 
     public ListaUsers getListaAmigos() {
         return listaAmigos;
+    }
+
+    public ListaUsers getListaPedidos() {
+        return listaPedidos;
     }
 
     @Override

@@ -1,11 +1,11 @@
 package BackEnd;
 
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Locale;
 
 public class AtendedorContactos extends UnicastRemoteObject implements InterfaceContactos {
 
@@ -34,6 +34,10 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
 
     public ListaUsers getContactos() throws RemoteException {
         return getArrayListContactos();
+    }
+
+    public ListaUsers getContactos(String stringProcura) throws RemoteException {
+        return getArrayListContactos(stringProcura);
     }
 
     /* private Vector<String> getIPList() {
@@ -72,6 +76,34 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
             arrayContactos.getUsers().add(contacto.getUser());
         }
         return arrayContactos;
+    }
+
+    private ListaUsers getArrayListContactos(String stringProcura) {
+        ListaUsers arrayContactos = new ListaUsers();
+        for (UserInfo contacto : contactos) {
+            if (procurarString(stringProcura, contacto.getUser().getNickname()) || procurarString(stringProcura, contacto.getUser().getEmail()) || procurarString(stringProcura, contacto.getUser().getCurso())) {
+                arrayContactos.getUsers().add(contacto.getUser());
+            }
+        }
+        return arrayContactos;
+    }
+
+    private boolean procurarString(String stringProcura, String stringProcurada) {
+        int index = 0;
+        boolean returnValue = true;
+        if (stringProcura.length() > stringProcurada.length()) {
+            return false;
+        } else {
+            index = stringProcura.length();
+        }
+        char[] arrayProcura = stringProcura.toLowerCase(Locale.ITALY).toCharArray();
+        char[] arrayProcurado = stringProcurada.toLowerCase(Locale.ITALY).toCharArray();
+        for (int i = 0; i < index; i++) {
+            if (!(arrayProcura[i] == arrayProcurado[i])) {
+                returnValue = false;
+            }
+        }
+        return returnValue;
     }
 }
 
