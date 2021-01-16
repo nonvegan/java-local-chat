@@ -5,20 +5,52 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import javax.swing.DefaultListModel;
 import javax.swing.JTextArea;
 
 public class JanelaChat extends javax.swing.JFrame {
 
-    User autor;
-    ArrayList<User> listaContactos;
-    Servidor server;
+    Sistema sistema;
+    DefaultListModel dlm1;
+    DefaultListModel dlm2;
 
-    public JanelaChat(User autor, ListaUsers lista) throws IOException, ClassNotFoundException {
+    public JanelaChat(Sistema sistema) throws IOException, ClassNotFoundException {
         initComponents();
-        this.autor = autor;
-        this.listaContactos = lista.getUsers();
-        this.setTitle("Utilizador: " + autor.getNickname() + ", Porta: " + autor.getPorta());
+        this.sistema = sistema;
+        this.setTitle("Utilizador: " + sistema.getCurrentUser().getNickname() + ", Porta: " + sistema.getCurrentUser().getPorta());
         jTextArea1.setEditable(false);
+        dlm1 = new DefaultListModel<String>();
+        dlm2 = new DefaultListModel<String>();
+        atualizarlistaAmigos();
+        atualizarListaPedidos();
+        atualizarButton();
+
+    }
+
+    public void atualizarlistaAmigos() {
+        dlm1.clear();
+        for (User user : sistema.getCurrentUser().getListaAmigos().getUsers()) {
+            dlm1.addElement(user.getNickname() + " - " + user.getEmail() + " - (" + user.getCurso() + ")");
+        }
+        jList1.setModel(dlm1);
+    }
+
+    public void atualizarListaPedidos() {
+        dlm2.clear();
+        for (User user : sistema.getCurrentUser().getListaPedidos().getUsers()) {
+            dlm2.addElement(user.getNickname() + " - " + user.getEmail() + " - (" + user.getCurso() + ")");
+        }
+        jList2.setModel(dlm2);
+    }
+
+    public void atualizarButton() {
+        if (jTabbedPane1.getSelectedIndex() == 0) {
+            jButton4.setEnabled(true);
+            jButton5.setEnabled(false);
+        } else {
+            jButton4.setEnabled(false);
+            jButton5.setEnabled(true);
+        }
     }
 
     public JTextArea getChat() {
@@ -34,6 +66,15 @@ public class JanelaChat extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jList2 = new javax.swing.JList<>();
+        jButton5 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -56,6 +97,48 @@ public class JanelaChat extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setText("Logout");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton4.setText("Remover");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPane1StateChanged(evt);
+            }
+        });
+
+        jScrollPane2.setViewportView(jList1);
+
+        jTabbedPane1.addTab("Lista de Amigos", jScrollPane2);
+
+        jScrollPane3.setViewportView(jList2);
+
+        jTabbedPane1.addTab("Pedidos de amizade", jScrollPane3);
+
+        jButton5.setText("Aceitar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jButton8.setText("contactos");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -63,30 +146,53 @@ public class JanelaChat extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(137, 137, 137)
+                        .addComponent(jButton3))
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(27, 27, 27)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane1)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1))))
+                                .addComponent(jButton1)))
+                        .addGap(32, 32, 32)
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(108, 108, 108)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(28, Short.MAX_VALUE))
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(181, 181, 181)
+                        .addComponent(jButton5)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton4)))
+                .addContainerGap(53, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton8)
+                .addGap(276, 276, 276))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(jButton2)
+                    .addComponent(jButton5)
+                    .addComponent(jButton4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jButton8)
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         pack();
@@ -98,8 +204,8 @@ public class JanelaChat extends javax.swing.JFrame {
             Date data = new Date();
             String tempo = "<" + formatadorTempo.format(data) + "> ";
             jTextArea1.append(tempo + "Enviada: " + jTextField1.getText() + "\n");
-            for (User destino : listaContactos) {
-                Cliente cliente = new Cliente(autor, destino, jTextField1.getText());
+            for (User destino : sistema.getCurrentUser().getListaAmigos().getUsers()) {
+                Cliente cliente = new Cliente(sistema.getCurrentUser(), destino, jTextField1.getText(), "enviar");
                 cliente.start();
             }
             jTextField1.setText("");
@@ -111,11 +217,55 @@ public class JanelaChat extends javax.swing.JFrame {
         jTextArea1.setText("");
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        sistema.setCurrentUser(null);
+        sistema.getServidorSocket().fecharSocket();
+        this.dispose();
+        new Login(sistema).setVisible(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        if (sistema.getCurrentUser().getListaAmigos().getUsers().size() > 0 && !jList1.isSelectionEmpty() && jList1.getSelectedIndices().length == 1) {
+            Cliente cliente = new Cliente(sistema.getCurrentUser(), sistema.getCurrentUser().getListaAmigos().getUsers().get(jList1.getSelectedIndex()), "", "remover");
+            sistema.getCurrentUser().getListaAmigos().getUsers().remove(jList1.getSelectedIndex());
+            cliente.start();
+            atualizarlistaAmigos();
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        if (jList2.getSelectedIndices().length == 1 && sistema.getCurrentUser().getListaPedidos().containsUser(sistema.getCurrentUser().getListaPedidos().getUsers().get(jList2.getSelectedIndex()).getNickname())) {
+            Cliente cliente = new Cliente(sistema.getCurrentUser(), sistema.getCurrentUser().getListaPedidos().getUsers().get(jList2.getSelectedIndex()), "", "aceitar");
+            cliente.run();
+            sistema.getCurrentUser().addAmigo(sistema.getCurrentUser().getListaPedidos().getUsers().get(jList2.getSelectedIndex()));
+            sistema.getCurrentUser().removePedido(sistema.getCurrentUser().getListaPedidos().getUsers().get(jList2.getSelectedIndex()).getNickname());
+            atualizarListaPedidos();
+            atualizarlistaAmigos();
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
+        atualizarButton();
+    }//GEN-LAST:event_jTabbedPane1StateChanged
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        new Contactos(sistema).setVisible(true);
+    }//GEN-LAST:event_jButton8ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JList<String> jList1;
+    private javax.swing.JList<String> jList2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables

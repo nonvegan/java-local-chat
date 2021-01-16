@@ -126,6 +126,7 @@ public class Registo extends javax.swing.JFrame {
             try {
                 User c1 = new User(jTextField1.getText(), jTextField2.getText(), jTextField3.getText(), InetAddress.getLocalHost().getHostAddress(), sistema.getListaUtilizadoresRegistados().getUsers().size()+2000);
                 sistema.getListaUtilizadoresRegistados().getUsers().add(c1);
+                sistema.enviarContacto(c1);
                 JOptionPane.showMessageDialog(this, c1.getPorta(), c1.getIp(), JOptionPane.YES_OPTION);
                 System.out.println(sistema.getListaUtilizadoresRegistados().getUsers().toString());
                 this.dispose();

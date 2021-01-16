@@ -9,14 +9,17 @@ import javax.swing.JOptionPane;
 public class Servidor extends Thread {
 
     Sistema sistema;
+    boolean continuar;
+    ServerSocket servidor;
 
     public Servidor(Sistema sistema) {
         this.sistema = sistema;
+        continuar = true;
+        servidor = null;
     }
 
     @Override
     public void run() {
-        ServerSocket servidor = null;
         try {
             servidor = new ServerSocket(sistema.getCurrentUser().getPorta());
         } catch (BindException e) {
@@ -28,16 +31,27 @@ public class Servidor extends Thread {
 
         sistema.getJanela().setVisible(true);
 
-        while (true) {
+        while (continuar) {
             try {
                 Socket ligacao = servidor.accept();
                 AtendedorPedidos handler = new AtendedorPedidos(ligacao, sistema);
                 handler.start();
+            } catch (SocketException ex) {
+                System.out.println("Socket encerrada");
             } catch (IOException ex) {
                 System.out.println("Erro do servidor: " + ex);
                 System.exit(1);
             }
 
+        }
+    }
+
+    public void fecharSocket() {
+        continuar = false;
+        try {
+            servidor.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

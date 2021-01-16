@@ -15,6 +15,15 @@ public class ClienteRMI {
             e.printStackTrace();
         }
     }
+    public void EnviarContacto(Sistema sistema,User user) {
+        try {
+            InterfaceContactos interfaceContacto = (InterfaceContactos) LocateRegistry.getRegistry(sistema.getIP_SERVIDOR()).lookup(sistema.getNOME_SERVICO());
+            interfaceContacto.putContacto(user);
+        } catch (Exception e) {
+            System.err.println("Error");
+            e.printStackTrace();
+        }
+    }
     public void pedirContactos(Sistema sistema) {
         try {
             InterfaceContactos interfaceContacto = (InterfaceContactos) LocateRegistry.getRegistry(sistema.getIP_SERVIDOR()).lookup(sistema.getNOME_SERVICO());
@@ -24,4 +33,14 @@ public class ClienteRMI {
             e.printStackTrace();
         }
     }
+        public void pedirContactos(Sistema sistema, String stringProcurada) {
+        try {
+            InterfaceContactos interfaceContacto = (InterfaceContactos) LocateRegistry.getRegistry(sistema.getIP_SERVIDOR()).lookup(sistema.getNOME_SERVICO());
+            sistema.setListaContactosGlobal(interfaceContacto.getContactos(stringProcurada));
+        } catch (Exception e) {
+            System.err.println("Error");
+            e.printStackTrace();
+        }
+    }
+    
 }

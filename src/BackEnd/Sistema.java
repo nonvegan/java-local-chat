@@ -21,6 +21,7 @@ public class Sistema implements Serializable {
     private ListaUsers listaContactosGlobal;
     private User currentUser;
     private JanelaChat janela;
+    private Servidor servidorSocket;
 
     public Sistema() throws IOException {
         listaUtilizadoresRegistados = new ListaUsers();
@@ -28,6 +29,14 @@ public class Sistema implements Serializable {
         currentUser = null;
         janela = null;
         isSaved = true;
+    }
+
+    public Servidor getServidorSocket() {
+        return servidorSocket;
+    }
+
+    public void setServidorSocket(Servidor servidorSocket) {
+        this.servidorSocket = servidorSocket;
     }
 
     public String getNOMEFICHEIRO() {
@@ -90,9 +99,19 @@ public class Sistema implements Serializable {
         ClienteRMI clienteRMI = new ClienteRMI();
         clienteRMI.EnviarContacto(this);
     }
+
+    public void enviarContacto(User user) {
+        ClienteRMI clienteRMI = new ClienteRMI();
+        clienteRMI.EnviarContacto(this, user);
+    }
+
     public void atualizarContactos() {
         ClienteRMI clienteRMI = new ClienteRMI();
         clienteRMI.pedirContactos(this);
+    }
+    public void atualizarContactos(String stringProcurada) {
+        ClienteRMI clienteRMI = new ClienteRMI();
+        clienteRMI.pedirContactos(this, stringProcurada);
     }
 
     public boolean containsUser(String nickname, String email) {                  //Método que verifica se já existe uma gravação com o nome dado

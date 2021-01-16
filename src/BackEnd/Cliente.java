@@ -13,11 +13,13 @@ public class Cliente extends Thread {
     private User fonte;
     private User destino;
     private String mensagem;
+    private String metodo;
 
-    public  Cliente(User fonte, User destino, String mensagem) {
+    public Cliente(User fonte, User destino, String mensagem, String metodo) {
         this.fonte = fonte;
         this.destino = destino;
         this.mensagem = mensagem;
+        this.metodo = metodo;
     }
 
     @Override
@@ -30,8 +32,20 @@ public class Cliente extends Thread {
             ligacao = new Socket(serverAddress, porto);
             BufferedReader in = new BufferedReader(new InputStreamReader(ligacao.getInputStream()));
             PrintWriter out = new PrintWriter(ligacao.getOutputStream(), true);
-            String request = "get" + " " + this.fonte.getNickname() + " " + "{/}" + mensagem;
-            out.println(request);
+            String request;
+            if (metodo.equals("enviar")) {
+                request = metodo + " " + this.fonte.getNickname() + " " + "{/}" + mensagem;
+                out.println(request);
+            } else if (metodo.equals("remover")) {
+                request = metodo + " " + this.fonte.getNickname();
+                out.println(request);
+            } else if (metodo.equals("adicionar")) {
+                request = metodo + " " + this.fonte.getNickname();
+                out.println(request);
+            }else if (metodo.equals("aceitar")) {
+                request = metodo + " " + this.fonte.getNickname();
+                out.println(request);
+            }
             String msg;
             msg = in.readLine();
             System.out.println(msg);
