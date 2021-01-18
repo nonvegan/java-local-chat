@@ -12,10 +12,9 @@ import javax.swing.JOptionPane;
 
 public class Sistema implements Serializable {
 
-    private boolean isSaved = true;
     public static final String NOMEPROGRAMA = "Sistema de Mensagens";
     private static final String NOMEFICHEIRO = "Sistema.Dados";
-    private static String IP_SERVIDOR = "localhost";
+    private static String IP_SERVIDOR = "192.168.1.12";
     private static final String NOME_SERVICO = "/ServidorContactos";
     private ListaUsers listaUtilizadoresRegistados;
     private ListaUsers listaContactosGlobal;
@@ -28,7 +27,6 @@ public class Sistema implements Serializable {
         listaContactosGlobal = new ListaUsers();
         currentUser = null;
         janela = null;
-        isSaved = true;
     }
 
     public Servidor getServidorSocket() {
@@ -41,14 +39,6 @@ public class Sistema implements Serializable {
 
     public String getNOMEFICHEIRO() {
         return NOMEFICHEIRO;
-    }
-
-    public boolean isIsSaved() {
-        return isSaved;
-    }
-
-    public void setSaved(boolean isSaved) {
-        this.isSaved = isSaved;
     }
 
     public ListaUsers getListaUtilizadoresRegistados() {
@@ -109,6 +99,7 @@ public class Sistema implements Serializable {
         ClienteRMI clienteRMI = new ClienteRMI();
         clienteRMI.pedirContactos(this);
     }
+
     public void atualizarContactos(String stringProcurada) {
         ClienteRMI clienteRMI = new ClienteRMI();
         clienteRMI.pedirContactos(this, stringProcurada);
@@ -155,7 +146,6 @@ public class Sistema implements Serializable {
         try {
             inputSistema = new ObjectInputStream(new FileInputStream(this.getNOMEFICHEIRO()));
             Sistema sistema = (Sistema) inputSistema.readObject();
-            sistema.setSaved(true);
             return sistema;
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(componente, "Os seus dados não foram carregados com sucesso. " + ex.getMessage(), "InputStream", JOptionPane.WARNING_MESSAGE);
@@ -177,9 +167,7 @@ public class Sistema implements Serializable {
         ObjectOutputStream outputSistema = null;
         try {
             outputSistema = new ObjectOutputStream(new FileOutputStream(this.getNOMEFICHEIRO()));
-            this.setSaved(true);
             outputSistema.writeObject(this);
-            JOptionPane.showMessageDialog(componente, "Os seus dados foram guardados com Sucesso.", "OutputStream", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(componente, "Os seus dados não foram guardados com sucesso. " + ex.getMessage(), "OutputStream", JOptionPane.WARNING_MESSAGE);
         } finally {

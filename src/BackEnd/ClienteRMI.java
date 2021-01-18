@@ -12,7 +12,6 @@ public class ClienteRMI {
             interfaceContacto.putContacto(sistema.getCurrentUser());
         } catch (Exception e) {
             System.err.println("Error");
-            e.printStackTrace();
         }
     }
     public void EnviarContacto(Sistema sistema,User user) {
@@ -21,7 +20,6 @@ public class ClienteRMI {
             interfaceContacto.putContacto(user);
         } catch (Exception e) {
             System.err.println("Error");
-            e.printStackTrace();
         }
     }
     public void pedirContactos(Sistema sistema) {
@@ -30,7 +28,6 @@ public class ClienteRMI {
             sistema.setListaContactosGlobal(interfaceContacto.getContactos());
         } catch (Exception e) {
             System.err.println("Error");
-            e.printStackTrace();
         }
     }
         public void pedirContactos(Sistema sistema, String stringProcurada) {
@@ -39,7 +36,6 @@ public class ClienteRMI {
             sistema.setListaContactosGlobal(interfaceContacto.getContactos(stringProcurada));
         } catch (Exception e) {
             System.err.println("Error");
-            e.printStackTrace();
         }
     }
     

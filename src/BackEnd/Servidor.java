@@ -6,18 +6,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
-public class Servidor extends Thread {
-
+public class Servidor extends Thread implements Serializable {
+    
     Sistema sistema;
     boolean continuar;
     ServerSocket servidor;
-
+    
     public Servidor(Sistema sistema) {
         this.sistema = sistema;
         continuar = true;
         servidor = null;
     }
-
+    
     @Override
     public void run() {
         try {
@@ -28,9 +28,9 @@ public class Servidor extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         sistema.getJanela().setVisible(true);
-
+        
         while (continuar) {
             try {
                 Socket ligacao = servidor.accept();
@@ -42,17 +42,19 @@ public class Servidor extends Thread {
                 System.out.println("Erro do servidor: " + ex);
                 System.exit(1);
             }
-
+            
         }
     }
-
+    
     public void fecharSocket() {
         continuar = false;
         try {
             servidor.close();
         } catch (IOException ex) {
             Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            sistema.setServidorSocket(null);
         }
     }
-
+    
 }

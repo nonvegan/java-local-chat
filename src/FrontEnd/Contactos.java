@@ -7,6 +7,8 @@ package FrontEnd;
 
 import BackEnd.Cliente;
 import BackEnd.Sistema;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -22,6 +24,8 @@ public class Contactos extends javax.swing.JFrame {
 
     public Contactos(Sistema sistema) {
         initComponents();
+        setTitle("Rede Social - Contactos - " + "Utilizador :" + sistema.getCurrentUser().getNickname() + ", Porta: " + sistema.getCurrentUser().getPorta());
+        setLocationRelativeTo(null);
         this.sistema = sistema;
         this.modelo = criarTabela();
         jTable1.setModel(modelo);

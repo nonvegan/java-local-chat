@@ -1,32 +1,57 @@
 package FrontEnd;
 
 import BackEnd.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 public class JanelaChat extends javax.swing.JFrame {
-
+    
     Sistema sistema;
     DefaultListModel dlm1;
     DefaultListModel dlm2;
-
+    
     public JanelaChat(Sistema sistema) throws IOException, ClassNotFoundException {
         initComponents();
+        setTitle("Rede Social - " +  "Utilizador :" + sistema.getCurrentUser().getNickname() + ", Porta: " + sistema.getCurrentUser().getPorta());
         this.sistema = sistema;
-        this.setTitle("Utilizador: " + sistema.getCurrentUser().getNickname() + ", Porta: " + sistema.getCurrentUser().getPorta());
         jTextArea1.setEditable(false);
         dlm1 = new DefaultListModel<String>();
         dlm2 = new DefaultListModel<String>();
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         atualizarlistaAmigos();
         atualizarListaPedidos();
         atualizarButton();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {  //Adiciona um listener da janela a fcher
 
+                try {
+                    limparJanelas();
+                    sistema.setJanela(null);
+                    sistema.setCurrentUser(null);
+                    sistema.getServidorSocket().fecharSocket();
+                    sistema.setServidorSocket(null);
+                    sistema.writeSistema(null);
+                    
+                } catch (IOException ex) {
+                    Logger.getLogger(JanelaChat.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    System.exit(1);
+                }
+            }
+        });
+        
     }
-
+    
     public void atualizarlistaAmigos() {
         dlm1.clear();
         for (User user : sistema.getCurrentUser().getListaAmigos().getUsers()) {
@@ -34,7 +59,7 @@ public class JanelaChat extends javax.swing.JFrame {
         }
         jList1.setModel(dlm1);
     }
-
+    
     public void atualizarListaPedidos() {
         dlm2.clear();
         for (User user : sistema.getCurrentUser().getListaPedidos().getUsers()) {
@@ -42,7 +67,7 @@ public class JanelaChat extends javax.swing.JFrame {
         }
         jList2.setModel(dlm2);
     }
-
+    
     public void atualizarButton() {
         if (jTabbedPane1.getSelectedIndex() == 0) {
             jButton4.setEnabled(true);
@@ -52,11 +77,11 @@ public class JanelaChat extends javax.swing.JFrame {
             jButton5.setEnabled(true);
         }
     }
-
+    
     public JTextArea getChat() {
         return jTextArea1;
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -146,30 +171,31 @@ public class JanelaChat extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(137, 137, 137)
-                        .addComponent(jButton3))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jScrollPane1)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jButton1)))
+                                .addGap(32, 32, 32)
+                                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(108, 108, 108)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(181, 181, 181)
+                                .addComponent(jButton5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)))
-                        .addGap(32, 32, 32)
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(108, 108, 108)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(181, 181, 181)
-                        .addComponent(jButton5)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton4)))
-                .addContainerGap(53, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton8)
-                .addGap(276, 276, 276))
+                                .addComponent(jButton4)))
+                        .addGap(0, 18, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(183, 183, 183)
+                        .addComponent(jButton3)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,11 +214,15 @@ public class JanelaChat extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(jButton5)
                     .addComponent(jButton4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton8)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton3)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(19, Short.MAX_VALUE))))
         );
 
         pack();
@@ -218,9 +248,16 @@ public class JanelaChat extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        limparJanelas();
+        sistema.setJanela(null);
         sistema.setCurrentUser(null);
         sistema.getServidorSocket().fecharSocket();
-        this.dispose();
+        sistema.setServidorSocket(null);
+        try {
+            sistema.writeSistema(null);
+        } catch (IOException ex) {
+            Logger.getLogger(JanelaChat.class.getName()).log(Level.SEVERE, null, ex);
+        }
         new Login(sistema).setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -251,7 +288,14 @@ public class JanelaChat extends javax.swing.JFrame {
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         new Contactos(sistema).setVisible(true);
     }//GEN-LAST:event_jButton8ActionPerformed
-
+    public void limparJanelas() {
+        System.gc();//garbage collection
+        java.awt.Window win[] = java.awt.Window.getWindows();//faz dispose de todas as janelas abertas
+        for (int i = 0; i < win.length; i++) {
+            win[i].dispose();
+            win[i] = null;
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

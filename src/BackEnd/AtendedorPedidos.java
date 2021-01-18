@@ -5,14 +5,16 @@ import java.net.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AtendedorPedidos extends Thread {
-
+    
     Socket ligacao;
     BufferedReader in;
     PrintWriter out;
     Sistema sistema;
-
+    
     public AtendedorPedidos(Socket ligacao, Sistema sistema) {
         this.ligacao = ligacao;
         this.sistema = sistema;
@@ -24,7 +26,7 @@ public class AtendedorPedidos extends Thread {
             System.exit(1);
         }
     }
-
+    
     public void run() {
         try {
             String response;
@@ -43,26 +45,26 @@ public class AtendedorPedidos extends Thread {
                 }
                 out.println(response);
             } else if (metodo.equals("remover")) {
-                response = "101\n";
+                response = "200\n";
                 sistema.getCurrentUser().removeAmigo(nickname);
                 sistema.getJanela().atualizarlistaAmigos();
                 out.println(response);
             } else if (metodo.equals("adicionar")) {
-                response = "101\n";
+                response = "200\n";
                 sistema.getCurrentUser().addPedido(nickname, sistema.getListaContactosGlobal());
                 sistema.getJanela().atualizarListaPedidos();
-                 sistema.getJanela().atualizarlistaAmigos();
+                sistema.getJanela().atualizarlistaAmigos();
                 out.println(response);
-            }else if (metodo.equals("aceitar")) {
-                response = "101\n";
+            } else if (metodo.equals("aceitar")) {
+                response = "200\n";
                 sistema.getCurrentUser().addAmigo(sistema.getListaContactosGlobal().getUser(nickname));
-                 sistema.getJanela().atualizarlistaAmigos();
-                 sistema.getJanela().atualizarListaPedidos();
+                sistema.getJanela().atualizarlistaAmigos();
+                sistema.getJanela().atualizarListaPedidos();
                 out.println(response);
             } else {
-                out.println("201\n");
+                out.println("400\n");
             }
-
+            
             out.flush();
             out.close();
             in.close();
