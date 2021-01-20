@@ -31,12 +31,6 @@ public class Contactos extends javax.swing.JFrame {
         jTable1.setModel(modelo);
         jButton2.setEnabled(false);
 
-        /* jTable1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent event) {
-                System.out.println("TESTE -> " + jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString());
-                
-            }
-        });*/
     }
 
     public AbstractTableModel criarTabela() {
