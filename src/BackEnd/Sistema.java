@@ -14,7 +14,7 @@ public class Sistema implements Serializable {
 
     public static final String NOMEPROGRAMA = "Sistema de Mensagens";
     private static final String NOMEFICHEIRO = "Sistema.Dados";
-    private static String IP_SERVIDOR = "192.168.1.12";
+    private static String IP_SERVIDOR = "192.168.43.214";
     private static final String NOME_SERVICO = "/ServidorContactos";
     private ListaUsers listaUtilizadoresRegistados;
     private ListaUsers listaContactosGlobal;

@@ -229,7 +229,7 @@ public class JanelaChat extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (!jTextField1.getText().isBlank()) {
+        if (!jTextField1.getText().trim().isEmpty()) {
             SimpleDateFormat formatadorTempo = new SimpleDateFormat("HH:mm:ss");
             Date data = new Date();
             String tempo = "<" + formatadorTempo.format(data) + "> ";

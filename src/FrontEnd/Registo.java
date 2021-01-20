@@ -128,14 +128,19 @@ public class Registo extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (!jTextField1.getText().isBlank() && !jTextField2.getText().isBlank() && !jTextField3.getText().isBlank()) {
+        if (!jTextField1.getText().trim().isEmpty() && !jTextField2.getText().trim().isEmpty() && !jTextField3.getText().trim().isEmpty()) {
             if (!(sistema.containsNickname(jTextField1.getText()) || sistema.containsMail(jTextField2.getText()))) {
                 try {
                     User c1 = new User(jTextField1.getText(), jTextField2.getText(), jTextField3.getText(), InetAddress.getLocalHost().getHostAddress(), 2000);
                     sistema.getListaUtilizadoresRegistados().getUsers().add(c1);
-                    sistema.enviarContacto(c1);
+                    Thread t = new Thread() {
+                        public void run() {
+                            sistema.enviarContacto(c1);
+                        }
+                    };
+                    t.start();
                     sistema.writeSistema(null);
-                    JOptionPane.showMessageDialog(null, "Utilizador registado com sucesso.", "Sucesso",JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Utilizador registado com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                     this.dispose();
                     new Login(sistema).setVisible(true);
                 } catch (UnknownHostException ex) {

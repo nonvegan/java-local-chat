@@ -182,11 +182,22 @@ public class Contactos extends javax.swing.JFrame {
         jTable1.getSelectionModel().clearSelection();
         jButton2.setEnabled(false);
         if (jTextField1.getText().trim().isEmpty()) {
-            sistema.atualizarContactos();
-            modelo.fireTableDataChanged();
+            Thread t = new Thread() {
+                public void run() {
+                    sistema.atualizarContactos();
+                    modelo.fireTableDataChanged();
+                }
+            };
+            t.start();
         } else {
-            sistema.atualizarContactos(jTextField1.getText());
-            modelo.fireTableDataChanged();
+            Thread t = new Thread() {
+                public void run() {
+                    sistema.atualizarContactos(jTextField1.getText());
+                    modelo.fireTableDataChanged();
+                }
+            };
+            t.start();
+
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

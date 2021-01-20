@@ -155,8 +155,13 @@ public class Login extends javax.swing.JFrame {
         if (sistema.containsUser(textNickname.getText(), textEmail.getText())) {
             sistema.setCurrentUser(textNickname.getText(), textEmail.getText());
             sistema.getCurrentUser().atualizarIp();
-            sistema.enviarContacto();
-            sistema.atualizarContactos();
+            Thread t = new Thread() {
+                public void run() {
+                    sistema.enviarContacto();
+                    sistema.atualizarContactos();
+                }
+            };
+            t.start();
             this.dispose();
             try {
                 JanelaChat janela = new JanelaChat(sistema);
