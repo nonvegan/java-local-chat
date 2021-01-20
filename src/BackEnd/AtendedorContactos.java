@@ -24,7 +24,7 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
 
     public AtendedorContactos() throws RemoteException, ClassNotFoundException, IOException {
         super();
-        contactos = readContactos();
+        contactos = new ArrayList<UserInfo>();
     }
 
     public void putContacto(User user) throws RemoteException {
@@ -42,11 +42,6 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
                 System.out.print("user novo ->");
             }
             System.out.println(user.toString());
-            try {
-                writeContactos();
-            } catch (IOException ex) {
-                Logger.getLogger(AtendedorContactos.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 
@@ -83,7 +78,6 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
         for (UserInfo contacto : contactos) {
             if (!(contacto.tempoPassado() > 180 * 1000)) {
                 arrayContactos.getUsers().add(contacto.getUser());
-                System.out.println(contacto.tempoPassado());
             }
         }
         return arrayContactos;
@@ -119,42 +113,6 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
         return returnValue;
     }
 
-    public ArrayList<UserInfo> readContactos() throws ClassNotFoundException, IOException {
-        ObjectInputStream inputContactos = null;
-        ObjectOutputStream outputContactos = null;
-        try {
-            inputContactos = new ObjectInputStream(new FileInputStream("Contactos.Dados"));
-            ArrayList<UserInfo> contactosLocal = (ArrayList<UserInfo>) inputContactos.readObject();
-            return contactosLocal;
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Os contactos não foram carregados com sucesso. " + ex.getMessage(), "InputStream", JOptionPane.WARNING_MESSAGE);
-            outputContactos = new ObjectOutputStream(new FileOutputStream("Contactos.Dados"));
-            ArrayList<UserInfo> contactosLocal = new ArrayList<UserInfo>();
-            outputContactos.writeObject(contactosLocal);
-            return contactosLocal;
-        } finally {
-            if (inputContactos != null) {
-                inputContactos.close();
-            }
-            if (outputContactos != null) {
-                outputContactos.close();
-            }
-        }
-    }
-
-    public void writeContactos() throws IOException {                            
-        ObjectOutputStream outputContactos = null;
-        try {
-            outputContactos = new ObjectOutputStream(new FileOutputStream("Contactos.Dados"));
-            outputContactos.writeObject(contactos);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Os seus dados não foram guardados com sucesso. " + ex.getMessage(), "OutputStream", JOptionPane.WARNING_MESSAGE);
-        } finally {
-            if (outputContactos != null) {
-                outputContactos.close();
-            }
-        }
-    }
 }
 
 class UserInfo implements Serializable {
