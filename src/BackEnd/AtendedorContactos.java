@@ -1,18 +1,30 @@
 package BackEnd;
 
+import java.awt.Component;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class AtendedorContactos extends UnicastRemoteObject implements InterfaceContactos {
 
-    private ArrayList<UserInfo> contactos = new ArrayList<UserInfo>();
+    private ArrayList<UserInfo> contactos;
 
-    public AtendedorContactos() throws RemoteException {
+    public AtendedorContactos() throws RemoteException, ClassNotFoundException, IOException {
         super();
+        contactos = readContactos();
     }
 
     public void putContacto(User user) throws RemoteException {
@@ -22,13 +34,19 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
         synchronized (this) {
             if (containsUserInfo(contactos, user)) {
                 getUserInfo(user).getUser().setIp(user.getIp());
-                getUserInfo(user).setLastSeen(tempoAtual);
+                getUserInfo(user).setUltimoLogin();
                 System.out.print("user nao novo ->");
+
             } else {
                 contactos.add(new UserInfo(user, tempoAtual));
                 System.out.print("user novo ->");
             }
             System.out.println(user.toString());
+            try {
+                writeContactos();
+            } catch (IOException ex) {
+                Logger.getLogger(AtendedorContactos.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -40,16 +58,6 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
         return getArrayListContactos(stringProcura);
     }
 
-    /* private Vector<String> getIPList() {
-        Vector<String> result = new Vector<String>();
-        for (Enumeration<IPInfo> e = presentIPs.elements(); e.hasMoreElements();) {
-            IPInfo element = e.nextElement();
-            if (!element.timeOutPassed(180 * 1000)) {
-                result.add(element.getIP());
-            }
-        }
-        return result;
-    } */
     private boolean containsUserInfo(ArrayList<UserInfo> contactos, User user) {
         boolean contains = false;
         for (UserInfo contacto : contactos) {
@@ -73,7 +81,10 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
     private ListaUsers getArrayListContactos() {
         ListaUsers arrayContactos = new ListaUsers();
         for (UserInfo contacto : contactos) {
-            arrayContactos.getUsers().add(contacto.getUser());
+            if (!(contacto.tempoPassado() > 180 * 1000)) {
+                arrayContactos.getUsers().add(contacto.getUser());
+                System.out.println(contacto.tempoPassado());
+            }
         }
         return arrayContactos;
     }
@@ -82,7 +93,9 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
         ListaUsers arrayContactos = new ListaUsers();
         for (UserInfo contacto : contactos) {
             if (procurarString(stringProcura, contacto.getUser().getNickname()) || procurarString(stringProcura, contacto.getUser().getEmail()) || procurarString(stringProcura, contacto.getUser().getCurso())) {
-                arrayContactos.getUsers().add(contacto.getUser());
+                if (!(contacto.tempoPassado() > 180 * 1000)) {
+                    arrayContactos.getUsers().add(contacto.getUser());
+                }
             }
         }
         return arrayContactos;
@@ -105,32 +118,76 @@ public class AtendedorContactos extends UnicastRemoteObject implements Interface
         }
         return returnValue;
     }
+
+    public ArrayList<UserInfo> readContactos() throws ClassNotFoundException, IOException {
+        ObjectInputStream inputContactos = null;
+        ObjectOutputStream outputContactos = null;
+        try {
+            inputContactos = new ObjectInputStream(new FileInputStream("Contactos.Dados"));
+            ArrayList<UserInfo> contactosLocal = (ArrayList<UserInfo>) inputContactos.readObject();
+            return contactosLocal;
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Os contactos não foram carregados com sucesso. " + ex.getMessage(), "InputStream", JOptionPane.WARNING_MESSAGE);
+            outputContactos = new ObjectOutputStream(new FileOutputStream("Contactos.Dados"));
+            ArrayList<UserInfo> contactosLocal = new ArrayList<UserInfo>();
+            outputContactos.writeObject(contactosLocal);
+            return contactosLocal;
+        } finally {
+            if (inputContactos != null) {
+                inputContactos.close();
+            }
+            if (outputContactos != null) {
+                outputContactos.close();
+            }
+        }
+    }
+
+    public void writeContactos() throws IOException {                            
+        ObjectOutputStream outputContactos = null;
+        try {
+            outputContactos = new ObjectOutputStream(new FileOutputStream("Contactos.Dados"));
+            outputContactos.writeObject(contactos);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Os seus dados não foram guardados com sucesso. " + ex.getMessage(), "OutputStream", JOptionPane.WARNING_MESSAGE);
+        } finally {
+            if (outputContactos != null) {
+                outputContactos.close();
+            }
+        }
+    }
 }
 
-class UserInfo {
+class UserInfo implements Serializable {
 
     private User user;
-    private long lastSeen;
+    private long ultimoLogin;
 
-    public UserInfo(User user, long lastSeen) {
+    public UserInfo(User user, long ultimoLogin) {
         this.user = user;
-        this.lastSeen = lastSeen;
+        this.ultimoLogin = ultimoLogin;
     }
 
     public User getUser() {
         return user;
     }
 
-    public void setLastSeen(long lastSeen) {
-        this.lastSeen = lastSeen;
+    public long getUltimoLogin() {
+        return ultimoLogin;
     }
 
-    public boolean timeOutPassed(int timeout) {
-        boolean result = false;
-        long timePassedSinceLastSeen = new Date().getTime() - this.lastSeen;
-        if (timePassedSinceLastSeen >= timeout) {
-            result = true;
-        }
-        return result;
+    public void setUltimoLogin() {
+        long ultimo = new Date().getTime();
+        this.ultimoLogin = ultimo;
     }
+
+    public double tempoPassado() {
+        double tempo = TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - ultimoLogin);
+        return tempo * 1000;
+    }
+
+    @Override
+    public String toString() {
+        return "UserInfo{" + "user=" + user + ", ultimaVisita=" + ultimoLogin + '}';
+    }
+
 }

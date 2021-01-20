@@ -1,6 +1,7 @@
 package BackEnd;
 
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
@@ -20,7 +21,7 @@ public class ServidorContactos {
         try {
             LocateRegistry.getRegistry("127.0.0.1", 1099).rebind(NOME_SERVICO, atendedor);
         } catch (RemoteException e) {
-            System.out.println("Registry not found");
+            System.out.println("registo não encontrado");
         }
     }
 
@@ -28,20 +29,23 @@ public class ServidorContactos {
         super();
     }
 
-    public void instanciarAtendedorContactos() {
+    public void instanciarAtendedorContactos() throws IOException, ClassNotFoundException {
 
         AtendedorContactos atendedorContactos = null;
         try {
             atendedorContactos = new AtendedorContactos();
         } catch (RemoteException e1) {
-            System.err.println("unexpected error...");
+            System.err.println("Erro no servidor");
+            e1.printStackTrace();
+        }catch(IOException e1){
+          System.err.println("Erro ");
             e1.printStackTrace();
         }
 
         try {
             bindRMI(atendedorContactos);
         } catch (RemoteException e1) {
-            System.err.println("erro ao registar o stub...");
+            System.err.println("Erro no registo do stub");
             e1.printStackTrace();
         }
 
