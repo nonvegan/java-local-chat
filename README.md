@@ -3,6 +3,6 @@ Chat across the local network using Java Sockets and fetch new users info from a
 
 
 
-#System Architecture
+System Architecture
 
 ![system architecture](architecture.png)
