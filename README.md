@@ -1,5 +1,5 @@
 # java-open-chat
-Chat across the local network using Java Sockets and fetch new users info from a JavaRMI server.
+Chat across the local network using JSockets and fetch user info from a JRMI server.
 
 
 
